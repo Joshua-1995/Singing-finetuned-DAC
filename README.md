@@ -117,8 +117,8 @@ recordings were split into 30 s chunks. **Audio is not redistributed here** (see
 
 | Dataset | Lang | Hours (train) | License | Source |
 |---|---|---:|---|---|
-| MSSV (다화자 가창 데이터, Multi-Speaker Singing Voice) | Korean | 228.8 | AI-Hub (Korea-only) | [AI-Hub #465](https://aihub.or.kr/aihubdata/data/view.do?currMenu=115&topMenu=100&dataSetSn=465) |
-| GV (다음색 가이드보컬 데이터, Guide Vocal) | Korean | 143.3 | AI-Hub (Korea-only) | [AI-Hub #473](https://aihub.or.kr/aihubdata/data/view.do?currMenu=115&topMenu=100&aihubDataSe=realm&dataSetSn=473) |
+| MSSV (Multi-Speaker Singing Voice) | Korean | 228.8 | AI-Hub (Korea-only) | [AI-Hub #465](https://aihub.or.kr/aihubdata/data/view.do?currMenu=115&topMenu=100&dataSetSn=465) |
+| GV (Guide Vocal) | Korean | 143.3 | AI-Hub (Korea-only) | [AI-Hub #473](https://aihub.or.kr/aihubdata/data/view.do?currMenu=115&topMenu=100&aihubDataSe=realm&dataSetSn=473) |
 | ACE-KiSing | Chinese | 30.0 | CC BY-NC 4.0 | [HF](https://huggingface.co/datasets/espnet/ace-kising-segments) |
 | M4Singer | Chinese | 28.2 | CC BY-NC-SA 4.0 | [GitHub](https://github.com/M4Singer/M4Singer) |
 | HESD | Korean | 14.0 | internal | — |
@@ -129,10 +129,10 @@ public datasets. (`opencpop` was excluded — its CC BY-NC-ND license forbids de
 
 ### Data availability & reproducibility
 - **MSSV & GV are [AI-Hub](https://www.aihub.or.kr) datasets** (built with support from
-  NIA, Korea). AI-Hub access is **restricted to Korean nationals** (`내국인만 데이터 신청 가능`),
-  requires login + per-dataset approval, and **any overseas use/export requires a separate
-  agreement with NIA**. They are therefore **not redistributed here**, and users outside
-  Korea generally cannot obtain them — substitute your own singing data to reproduce.
+  NIA, Korea). AI-Hub access is **restricted to Korean nationals**, requires login +
+  per-dataset approval, and **any overseas use/export requires a separate agreement with
+  NIA**. They are therefore **not redistributed here**, and users outside Korea generally
+  cannot obtain them — substitute your own singing data to reproduce.
 - **HESD** is an internal corpus and is not redistributed.
 - The public datasets (ACE-KiSing, M4Singer, CSD) are freely downloadable (see links above).
 - **No audio from any dataset is included in this repository** (code + docs + weights only).
@@ -198,11 +198,10 @@ weights inherit non-commercial terms. The DAC code/architecture is MIT
 - **AI-Hub datasets** (MSSV / GV), built with support from the National Information Society
   Agency (NIA), Republic of Korea:
 
-  > This work used datasets from **"The Open AI Dataset Project (AI-Hub, S. Korea)"**.
+  > This work used datasets from **"The Open AI Dataset Project (AI-Hub, S. Korea)"** —
+  > [Multi-Speaker Singing Voice (#465)](https://aihub.or.kr/aihubdata/data/view.do?currMenu=115&topMenu=100&dataSetSn=465)
+  > and [Guide Vocal (#473)](https://aihub.or.kr/aihubdata/data/view.do?currMenu=115&topMenu=100&aihubDataSe=realm&dataSetSn=473).
   > All data information can be accessed through **[AI-Hub](https://www.aihub.or.kr)**.
-  >
-  > 본 결과물은 한국지능정보사회진흥원의 사업결과로 구축된 AI 데이터([다화자 가창 데이터](https://aihub.or.kr/aihubdata/data/view.do?currMenu=115&topMenu=100&dataSetSn=465),
-  > [다음색 가이드보컬 데이터](https://aihub.or.kr/aihubdata/data/view.do?currMenu=115&topMenu=100&aihubDataSe=realm&dataSetSn=473))를 활용하여 수행되었습니다.
 
 - Compute: _alpha-test program — provider name TBD_ (1× NVIDIA RTX PRO 6000, Blackwell).
 
