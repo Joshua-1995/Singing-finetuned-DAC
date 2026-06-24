@@ -1,0 +1,16 @@
+# Core (Blackwell GPU needs the cu128 build — install torch separately, see below)
+descript-audio-codec==1.0.0
+# torch / torchaudio: install from the CUDA 12.8 index for Blackwell (sm_120) GPUs:
+#   pip install torch torchaudio --index-url https://download.pytorch.org/whl/cu128
+librosa
+soundfile
+numpy
+
+# Evaluation metrics
+pesq
+pystoi
+pyworld
+pysptk
+scipy
+matplotlib
+tensorboard

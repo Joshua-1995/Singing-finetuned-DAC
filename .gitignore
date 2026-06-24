@@ -1,0 +1,22 @@
+# Data & audio (never commit — license / size)
+data/
+*.wav
+*.flac
+*.mp3
+*.zip
+
+# Model weights & training runs (host weights on HF Hub, not Git)
+*.pth
+runs/
+ckpt/
+checkpoints/
+
+# Python
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+.venv/
+venv/
+
+# Keep doc figures (override the *.png-free default by being explicit)
+!docs/*.png
