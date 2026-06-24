@@ -1,31 +1,31 @@
 #!/usr/bin/env bash
-# DAC 24kHz Singing-Voice Fine-tuning 런처
-# 사용법:
-#   bash scripts/train.sh                 # 기본(joint) fine-tune, pretrained에서 resume
-#   bash scripts/train.sh fresh           # save_path를 비우고 처음부터 fine-tune
+# Fine-tune / continue-training launcher for Singing-finetuned-DAC.
+# Self-contained: uses repo-local train.py + conf. Run from the repo root.
 #
-# 사전 조건:
-#   - data/train/ , data/val/ 에 24kHz mono wav가 들어 있어야 함 (preprocess.py + make_split.py)
-#   - runs/dac_singing_ft/latest/dac 에 pretrained generator 패키지가 있어야 함 (이미 생성됨)
+# Prerequisites:
+#   1. pip install -r requirements.txt  (+ torch cu128 for Blackwell GPUs)
+#   2. Apply the two third-party patches in docs/PATCHES.md (argbind, audiotools).
+#   3. Put your 24kHz mono wavs under data/train/... and data/val/... :
+#        python scripts/preprocess.py --in_dir <raw> --out_dir data/train/<name> --jobs 64 [--segment_sec 30]
+#        python scripts/make_split.py --root data --val_ratio 0.05
+#   4. To fine-tune FROM the official pretrained DAC, bootstrap the start checkpoint:
+#        python scripts/bootstrap_pretrained.py --save_path runs/dac_singing_ft
+#      (or train from scratch by setting `resume: false` in conf/singing_24khz.yml)
+#
+# Usage:  bash scripts/train.sh [extra --argbind overrides ...]
 set -e
 
-REPO=/root/descript-audio-codec
-PY=/root/miniconda3/envs/dac_ft/bin/python
-CONF=/root/dac_singing/conf/singing_24khz.yml
-
+CONF=conf/singing_24khz.yml
 export CUDA_VISIBLE_DEVICES=${CUDA_VISIBLE_DEVICES:-0}
-export CUDNN_BENCHMARK=1
+export PYTORCH_CUDA_ALLOC_CONF=${PYTORCH_CUDA_ALLOC_CONF:-expandable_segments:True}
+export CUDNN_BENCHMARK=${CUDNN_BENCHMARK:-1}
 
-NTRAIN=$(find /root/dac_singing/data/train -name '*.wav' | wc -l)
-NVAL=$(find /root/dac_singing/data/val -name '*.wav' | wc -l)
+NTRAIN=$(find data/train -name '*.wav' 2>/dev/null | wc -l)
+NVAL=$(find data/val -name '*.wav' 2>/dev/null | wc -l)
 echo "[i] train wav: $NTRAIN | val wav: $NVAL"
 if [ "$NTRAIN" -eq 0 ]; then
-  echo "[!] data/train 에 wav가 없습니다. 먼저 데이터를 준비하세요:"
-  echo "    python scripts/preprocess.py --in_dir <raw> --out_dir data/train/<public|private>/<name>"
-  echo "    python scripts/make_split.py --root data --val_ratio 0.05"
-  exit 1
+  echo "[!] No wavs under data/train. Prepare data first (see header / README)."; exit 1
 fi
 
-cd "$REPO"
 echo "[i] launching training (TensorBoard logs -> runs/dac_singing_ft/logs)"
-exec "$PY" scripts/train.py --args.load "$CONF" "$@"
+exec python scripts/train.py --args.load "$CONF" "$@"

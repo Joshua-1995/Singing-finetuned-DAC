@@ -1,45 +1,45 @@
 # =========================================================================
 # DAC 24kHz Singing-Voice Fine-tuning Config
-# 베이스: descript-audio-codec repo의 conf/final/24khz.yml 을 상속하고
-#        노래 데이터 경로 + fine-tune 하이퍼파라미터만 오버라이드한다.
-# 실행은 repo 루트(/root/descript-audio-codec)에서 한다.
+# Inherits the base DAC 24kHz config and overrides only the data folders and
+# the fine-tuning hyper-parameters. Run from the repo root so the relative
+# $include path resolves (see scripts/train.sh).
 # =========================================================================
 $include:
-  - /root/descript-audio-codec/conf/final/24khz.yml
+  - conf/final/24khz.yml
 
-# --- pretrained 에서 이어서 학습 (fine-tune) ---
-# runs/dac_singing_ft/latest/dac 에 사전학습 generator 패키지를 미리 넣어두었다.
-# discriminator 패키지는 공식 배포에 없으므로 새로 초기화되어 warm-up 된다.
-save_path: /root/dac_singing/runs/dac_singing_ft
+# --- Resume from the pretrained generator (fine-tune) ---
+# Put the pretrained DAC generator package at <save_path>/latest/dac before the
+# first run (see scripts/train.sh / README). The official release has no
+# discriminator, so it is re-initialized and warmed up from scratch.
+save_path: runs/dac_singing_ft
 resume: true
 tag: latest
 
-# --- 학습 스케줄 (fine-tune은 from-scratch보다 짧게) ---
+# --- Schedule (fine-tune is shorter than from-scratch) ---
 num_iters: 200000
 save_iters: [10000, 25000, 50000, 100000, 150000]
 valid_freq: 1000
 sample_freq: 5000
 
-# --- 배치 / 세그먼트 (RTX PRO 6000, 97GB 기준 시작점; OOM이면 줄일 것) ---
+# --- Batch / segment (start point for a ~97GB GPU; lower batch if OOM) ---
 batch_size: 16
 val_batch_size: 16
 num_workers: 16
-train/AudioDataset.duration: 3.0      # 3초 세그먼트 (노래 harmonic/vibrato 문맥 확보)
+train/AudioDataset.duration: 3.0      # 3s segments (harmonic/vibrato context)
 val/AudioDataset.duration: 5.0
 train/AudioDataset.n_examples: 10000000
 val/AudioDataset.n_examples: 250
 
-# --- Optimizer: pretrained 대비 낮은 lr (24khz 기본 1e-4 유지) ---
+# --- Optimizer: low lr relative to pretraining (24kHz default 1e-4) ---
 AdamW.lr: 0.0001
 ExponentialLR.gamma: 0.999996
 
-# --- Loss 가중치는 24khz 기본값 사용 (검증된 값) ---
-# lambdas:  mel/loss=15, adv/feat_loss=2, adv/gen_loss=1, vq/commitment=0.25, vq/codebook=1
+# --- Loss weights: 24kHz defaults (mel 15, feat 2, gen 1, vq-commit 0.25, vq-codebook 1) ---
 
-# --- 데이터: 폴더 기반 (CSV 아님). 하위 폴더를 재귀 탐색한다. ---
+# --- Data: folder-based (not CSV). Sub-folders are scanned recursively. ---
 train/build_dataset.folders:
   singing:
-    - /root/dac_singing/data/train
+    - data/train
 val/build_dataset.folders:
   singing:
-    - /root/dac_singing/data/val
+    - data/val
