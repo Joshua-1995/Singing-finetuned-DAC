@@ -135,3 +135,24 @@ weights inherit non-commercial terms. The DAC code/architecture is MIT
 
 - [Descript Audio Codec](https://github.com/descriptinc/descript-audio-codec) (Kumar et al., NeurIPS 2023)
 - Public datasets: ACE-KiSing (ESPnet), M4Singer, CSD — thanks to their authors.
+
+## Citation
+
+This work is a fine-tune of the **Descript Audio Codec**; please cite the original paper:
+
+```bibtex
+@inproceedings{kumar2023high,
+  title     = {High-Fidelity Audio Compression with Improved {RVQGAN}},
+  author    = {Kumar, Rithesh and Seetharaman, Prem and Luebs, Alejandro and
+               Kumar, Ishaan and Kumar, Kundan},
+  booktitle = {Advances in Neural Information Processing Systems (NeurIPS)},
+  year      = {2023}
+}
+```
+
+If you use these fine-tuned weights, please also link this repository.
+
+### Dataset references
+- **M4Singer** — Zhang et al., *M4Singer: A Multi-Style, Multi-Singer and Musical Score Provided Mandarin Singing Corpus*, NeurIPS 2022.
+- **CSD** — Choi et al., *Children's Song Dataset for Singing Voice Research*, ISMIR 2020.
+- **ACE-KiSing / Opencpop** — see the [ESPnet](https://github.com/espnet/espnet) singing recipes.
