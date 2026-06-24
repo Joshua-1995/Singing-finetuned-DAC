@@ -21,16 +21,19 @@
 - **Compute**: 1× RTX PRO 6000 (Blackwell), PyTorch 2.11 + CUDA 12.8.
 
 ## Training data (~472 h, 24 kHz mono, mostly monophonic singing)
-| Dataset | Lang | Hours | License |
+| Dataset | Lang | Hours | License / source |
 |---|---|---:|---|
-| MSSV | KO | 228.8 | internal (not redistributed) |
-| GV | KO | 143.3 | internal (not redistributed) |
-| ACE-KiSing | ZH | 30.0 | CC BY-NC 4.0 |
-| M4Singer | ZH | 28.2 | CC BY-NC-SA 4.0 |
+| MSSV (다화자 가창 데이터) | KO | 228.8 | [AI-Hub #465](https://aihub.or.kr/aihubdata/data/view.do?currMenu=115&topMenu=100&dataSetSn=465) — Korea-only access |
+| GV (다음색 가이드보컬 데이터) | KO | 143.3 | [AI-Hub #473](https://aihub.or.kr/aihubdata/data/view.do?currMenu=115&topMenu=100&aihubDataSe=realm&dataSetSn=473) — Korea-only access |
+| ACE-KiSing | ZH | 30.0 | [CC BY-NC 4.0](https://huggingface.co/datasets/espnet/ace-kising-segments) |
+| M4Singer | ZH | 28.2 | [CC BY-NC-SA 4.0](https://github.com/M4Singer/M4Singer) |
 | HESD | KO | 14.0 | internal (not redistributed) |
-| CSD | KO/EN | 4.6 | CC BY-NC-SA 4.0 |
+| CSD | KO/EN | 4.6 | [CC BY-NC-SA 4.0](https://zenodo.org/record/4785016) |
 
-`opencpop` excluded (CC BY-NC-ND forbids derivatives).
+`opencpop` excluded (CC BY-NC-ND forbids derivatives). MSSV/GV are AI-Hub (NIA, Korea)
+datasets — access is restricted to Korean nationals and overseas use requires a separate
+NIA agreement; not redistributed here. Attribution: *This work used datasets from "The Open
+AI Dataset Project (AI-Hub, S. Korea)" (www.aihub.or.kr).*
 
 ## Evaluation
 Fixed held-out set, identical clips before/after. Metrics: Mel/STFT distance, SI-SDR, PESQ,
