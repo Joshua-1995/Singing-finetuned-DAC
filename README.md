@@ -31,14 +31,16 @@ Measured on a fixed held-out evaluation set (identical clips before/after), usin
 
 | Metric | Pretrained DAC | Fine-tuned | Δ |
 |---|---:|---:|---|
-| Mel distance ↓ | _TBD_ | _TBD_ | _TBD_ |
-| MCD (dB) ↓ | _TBD_ | _TBD_ | _TBD_ |
-| **F0 RMSE (cents) ↓** | _TBD_ | _TBD_ | _TBD_ |
-| **F0 correlation ↑** | _TBD_ | _TBD_ | _TBD_ |
-| PESQ ↑ | _TBD_ | _TBD_ | _TBD_ |
-| STOI ↑ | _TBD_ | _TBD_ | _TBD_ |
+| Mel distance ↓ | 0.668 | _TBD_ | _TBD_ |
+| MCD (dB) ↓ | 2.67 | _TBD_ | _TBD_ |
+| **F0 RMSE (cents) ↓** | 100.1 | _TBD_ | _TBD_ |
+| **F0 correlation ↑** | 0.900 | _TBD_ | _TBD_ |
+| PESQ ↑ | 4.22 | _TBD_ | _TBD_ |
+| STOI ↑ | 0.893 | _TBD_ | _TBD_ |
 
-*(Numbers filled in after training completes.)*
+*Held-out eval set: 160 clips across 6 datasets. Pretrained = official DAC 24 kHz baseline;
+fine-tuned numbers filled in after training. (SI-SDR is reported in the JSON but omitted here —
+it is phase-sensitive and low for all GAN codecs.)*
 
 ### Mel-spectrogram comparison
 
