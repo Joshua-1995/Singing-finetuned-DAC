@@ -117,8 +117,8 @@ recordings were split into 30 s chunks. **Audio is not redistributed here** (see
 
 | Dataset | Lang | Hours (train) | License | Source |
 |---|---|---:|---|---|
-| MSSV (Multi-Speaker Singing Voice) | Korean | 228.8 | AI-Hub (Korea-only) | [AI-Hub #465](https://aihub.or.kr/aihubdata/data/view.do?currMenu=115&topMenu=100&dataSetSn=465) |
-| GV (Guide Vocal) | Korean | 143.3 | AI-Hub (Korea-only) | [AI-Hub #473](https://aihub.or.kr/aihubdata/data/view.do?currMenu=115&topMenu=100&aihubDataSe=realm&dataSetSn=473) |
+| MSSV (Multi-Speaker Singing Voice) | Korean | 228.8 | [AI-Hub Terms of Use](https://www.aihub.or.kr/intrcn/guid/usagepolicy.do?currMenu=151&topMenu=105) | [AI-Hub #465](https://aihub.or.kr/aihubdata/data/view.do?currMenu=115&topMenu=100&dataSetSn=465) |
+| GV (Guide Vocal) | Korean | 143.3 | [AI-Hub Terms of Use](https://www.aihub.or.kr/intrcn/guid/usagepolicy.do?currMenu=151&topMenu=105) | [AI-Hub #473](https://aihub.or.kr/aihubdata/data/view.do?currMenu=115&topMenu=100&aihubDataSe=realm&dataSetSn=473) |
 | ACE-KiSing | Chinese | 30.0 | CC BY-NC 4.0 | [HF](https://huggingface.co/datasets/espnet/ace-kising-segments) |
 | M4Singer | Chinese | 28.2 | CC BY-NC-SA 4.0 | [GitHub](https://github.com/M4Singer/M4Singer) |
 | HESD | Korean | 14.0 | internal | — |

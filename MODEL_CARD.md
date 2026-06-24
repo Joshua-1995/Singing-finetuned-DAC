@@ -23,8 +23,8 @@
 ## Training data (~472 h, 24 kHz mono, mostly monophonic singing)
 | Dataset | Lang | Hours | License / source |
 |---|---|---:|---|
-| MSSV (Multi-Speaker Singing Voice) | KO | 228.8 | [AI-Hub #465](https://aihub.or.kr/aihubdata/data/view.do?currMenu=115&topMenu=100&dataSetSn=465) — Korea-only access |
-| GV (Guide Vocal) | KO | 143.3 | [AI-Hub #473](https://aihub.or.kr/aihubdata/data/view.do?currMenu=115&topMenu=100&aihubDataSe=realm&dataSetSn=473) — Korea-only access |
+| MSSV (Multi-Speaker Singing Voice) | KO | 228.8 | [AI-Hub Terms of Use](https://www.aihub.or.kr/intrcn/guid/usagepolicy.do?currMenu=151&topMenu=105) ([#465](https://aihub.or.kr/aihubdata/data/view.do?currMenu=115&topMenu=100&dataSetSn=465)) — Korea-only |
+| GV (Guide Vocal) | KO | 143.3 | [AI-Hub Terms of Use](https://www.aihub.or.kr/intrcn/guid/usagepolicy.do?currMenu=151&topMenu=105) ([#473](https://aihub.or.kr/aihubdata/data/view.do?currMenu=115&topMenu=100&aihubDataSe=realm&dataSetSn=473)) — Korea-only |
 | ACE-KiSing | ZH | 30.0 | [CC BY-NC 4.0](https://huggingface.co/datasets/espnet/ace-kising-segments) |
 | M4Singer | ZH | 28.2 | [CC BY-NC-SA 4.0](https://github.com/M4Singer/M4Singer) |
 | HESD | KO | 14.0 | internal (not redistributed) |
