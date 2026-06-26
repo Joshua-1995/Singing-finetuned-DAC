@@ -22,10 +22,6 @@ accompanied vocals in MUSDB18). Singing has wide pitch range and vibrato that a
 general codec reconstructs imperfectly. Fine-tuning on ~470 h of (mostly monophonic)
 singing adapts the encoder/decoder/quantizer to this domain.
 
-This codec is the backbone of a Singing Voice Conversion pipeline: `wav → DAC latent
-z (B, 1024, T) @ 75 Hz → (manipulate) → DAC decode → wav`, so reconstruction quality
-upper-bounds the whole system.
-
 ## Results
 
 Pretrained DAC → fine-tuned, on a fixed held-out set (160 singing clips across the 6

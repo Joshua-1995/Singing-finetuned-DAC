@@ -4,12 +4,12 @@
 - **Model**: Descript Audio Codec (DAC) 24 kHz, fine-tuned for singing voice. **Architecture unchanged.**
 - **Base**: [`weights_24khz_8kbps_0.0.4`](https://github.com/descriptinc/descript-audio-codec/releases/download/0.0.4/weights_24khz.pth) (74.7 M generator, RVQ 32×1024 dim-8, hop 320 ≈ 75 Hz, 8 kbps).
 - **Type**: neural audio codec (encoder–RVQ–decoder + GAN discriminator during training).
-- **Developed for**: high-fidelity singing-voice reconstruction; backbone for Singing Voice Conversion.
+- **Developed for**: high-fidelity singing-voice reconstruction.
 - **License**: research / non-commercial (see below).
 
 ## Intended use
-- **In scope**: encoding/decoding singing voice at 24 kHz; latent (`z`, `codes`) extraction for
-  downstream singing models (SVC/SVS); research on neural codecs for singing.
+- **In scope**: encoding/decoding singing voice at 24 kHz; latent (`z`, `codes`) extraction;
+  research on neural codecs for singing voice.
 - **Out of scope**: commercial deployment (non-commercial data); speech/general-audio (use the
   original DAC); languages/styles far from the training mix without verification.
 
