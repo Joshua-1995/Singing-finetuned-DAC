@@ -2,7 +2,7 @@
 
 ## Model details
 - **Model**: Descript Audio Codec (DAC) 24 kHz, fine-tuned for singing voice. **Architecture unchanged.**
-- **Base**: `weights_24khz_8kbps_0.0.4` (74.7 M generator, RVQ 32×1024 dim-8, hop 320 ≈ 75 Hz, 8 kbps).
+- **Base**: [`weights_24khz_8kbps_0.0.4`](https://github.com/descriptinc/descript-audio-codec/releases/download/0.0.4/weights_24khz.pth) (74.7 M generator, RVQ 32×1024 dim-8, hop 320 ≈ 75 Hz, 8 kbps).
 - **Type**: neural audio codec (encoder–RVQ–decoder + GAN discriminator during training).
 - **Developed for**: high-fidelity singing-voice reconstruction; backbone for Singing Voice Conversion.
 - **License**: research / non-commercial (see below).
@@ -48,11 +48,6 @@ Fixed held-out set (160 clips across 6 datasets), identical clips before/after
 Off-the-shelf DAC reconstructs singing waveforms poorly (SI-SDR −9.6 dB on singing vs ~16 dB
 on general audio); fine-tuning restores it to the codec's native quality on the singing domain.
 `scripts/eval_quality.py` additionally reports PESQ/STOI/MCD/F0 metrics.
-
-## Limitations & biases
-- Korean-heavy data → other languages/singing styles may generalize less well.
-- VDE rose slightly (noisier voiced/unvoiced boundaries, likely near breaths/silences).
-- Discriminator trained from scratch → possible early GAN instability (did not prevent convergence).
 
 ## License
 Research / non-commercial only. Weights inherit the non-commercial terms of the

@@ -82,7 +82,7 @@ y = model.decode(z)                          # reconstructed waveform
 
 ## How it was fine-tuned
 
-- **Base**: `descript-audio-codec` 24 kHz, 8 kbps (`weights_24khz_8kbps_0.0.4`),
+- **Base**: `descript-audio-codec` 24 kHz, 8 kbps ([`weights_24khz_8kbps_0.0.4`](https://github.com/descriptinc/descript-audio-codec/releases/download/0.0.4/weights_24khz.pth)),
   74.7 M-param generator, RVQ 32×1024 (dim 8), hop 320 (~75 Hz latent).
 - **Strategy**: full fine-tune (encoder + decoder + quantizer) resumed from the
   pretrained generator. The official release ships no discriminator, so the
