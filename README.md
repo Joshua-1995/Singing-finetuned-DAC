@@ -184,6 +184,21 @@ mkdir -p runs/dac_singing_ft && mv best runs/dac_singing_ft/latest
 bash scripts/train.sh    # resumes generator + discriminator from our checkpoint
 ```
 
+## Roadmap
+
+Released so far: **24 kHz** singing fine-tune (this repo). Planned, fine-tuning the other
+official DAC base checkpoints on the same singing data with the same recipe:
+
+- [x] **24 kHz** — base [`weights_24khz`](https://github.com/descriptinc/descript-audio-codec/releases/download/0.0.4/weights_24khz.pth) (8 kbps, ≤24 kbps)
+- [ ] **44.1 kHz** — higher bandwidth / fidelity; base [`weights_44khz`](https://github.com/descriptinc/descript-audio-codec/releases/download/0.0.1/weights.pth) (8 kbps) and [`weights_44khz_16kbps`](https://github.com/descriptinc/descript-audio-codec/releases/download/1.0.0/weights_44khz_16kbps.pth) (16 kbps)
+- [ ] **16 kHz** — low-resource / streaming; base [`weights_16khz`](https://github.com/descriptinc/descript-audio-codec/releases/download/0.0.5/weights_16khz.pth) (8 kbps)
+- [ ] Listenable demo samples (from the CC BY-NC public datasets only)
+- [ ] ViSQOL metric in the eval table (paper's perceptual metric)
+
+> For another sample rate, re-preprocess the audio at that rate
+> (`preprocess.py --sr 44100`) and point the config's `$include` at `conf/final/44khz.yml`
+> (or `16khz.yml`); the rest of the pipeline is unchanged.
+
 ## License
 
 **Research / non-commercial use only.** The fine-tuning data includes CC BY-NC /
