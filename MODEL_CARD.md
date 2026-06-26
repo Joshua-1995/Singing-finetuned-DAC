@@ -53,3 +53,7 @@ on general audio); fine-tuning restores it to the codec's native quality on the 
 ## License
 Research / non-commercial only. Weights inherit the non-commercial terms of the
 CC BY-NC(-SA) and internal training data. DAC code/architecture: MIT © Descript.
+
+## Acknowledgements
+This work was supported by the GPU infrastructure provided by the Handong Global University
+AI Innovation Center.

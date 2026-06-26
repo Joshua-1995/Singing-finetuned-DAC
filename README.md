@@ -225,6 +225,9 @@ weights inherit non-commercial terms. The DAC code/architecture is MIT
   > and [Guide Vocal (#473)](https://aihub.or.kr/aihubdata/data/view.do?currMenu=115&topMenu=100&aihubDataSe=realm&dataSetSn=473).
   > All data information can be accessed through **[AI-Hub](https://www.aihub.or.kr)**.
 
+- **GPU infrastructure:** This work was supported by the GPU infrastructure provided by the
+  Handong Global University AI Innovation Center.
+
 ## Citation
 
 This work is a fine-tune of the **Descript Audio Codec**; please cite the original paper:
