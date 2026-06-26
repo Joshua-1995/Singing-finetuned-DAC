@@ -165,7 +165,7 @@ Hyper-parameters live in [`conf/singing_24khz.yml`](conf/singing_24khz.yml).
 
 ## Weights
 
-Hosted on the Hugging Face Hub (not in this Git repo): **_link TBD_**
+Hosted on the Hugging Face Hub (not in this Git repo): **https://huggingface.co/Joshua-1995/Singing-finetuned-DAC**
 
 | File | Size | Use |
 |---|---:|---|
