@@ -221,8 +221,6 @@ weights inherit non-commercial terms. The DAC code/architecture is MIT
   > and [Guide Vocal (#473)](https://aihub.or.kr/aihubdata/data/view.do?currMenu=115&topMenu=100&aihubDataSe=realm&dataSetSn=473).
   > All data information can be accessed through **[AI-Hub](https://www.aihub.or.kr)**.
 
-- Compute: _alpha-test program — provider name TBD_ (1× NVIDIA RTX PRO 6000, Blackwell).
-
 ## Citation
 
 This work is a fine-tune of the **Descript Audio Codec**; please cite the original paper:

@@ -179,6 +179,11 @@ def evaluate(ckpt, items, device, sr=24000):
         for name, fn in [("pesq", pesq_wb), ("stoi", stoi_metric)]:
             try: r[name] = fn(ref, rec, sr)
             except Exception: r[name] = float("nan")
+        try:
+            from audiotools.metrics import quality as _q
+            r["visqol"] = float(_q.visqol(ya, xa, mode="audio"))  # MOS-LQO, audio mode (48k), matches DAC paper
+        except Exception:
+            r["visqol"] = float("nan")
         try: r["mcd"] = mcd(ref, rec, sr)
         except Exception: r["mcd"] = float("nan")
         try: r.update(f0_metrics(ref, rec, sr))
@@ -202,7 +207,7 @@ def aggregate(rows):
 
 
 # ----------------------------- 비교 출력 -----------------------------
-DIRECTION = {"mel_dist":"↓","stft_dist":"↓","si_sdr":"↑","pesq":"↑","stoi":"↑","mcd":"↓",
+DIRECTION = {"visqol":"↑","mel_dist":"↓","stft_dist":"↓","si_sdr":"↑","pesq":"↑","stoi":"↑","mcd":"↓",
              "f0_rmse_cents":"↓","f0_corr":"↑","vde":"↓","gpe":"↓"}
 
 def print_compare(a, b):
@@ -226,7 +231,7 @@ def main():
     ap.add_argument("--out")
     ap.add_argument("--manifest", help="기존 manifest 사용")
     ap.add_argument("--build_manifest", help="새 manifest 생성 경로")
-    ap.add_argument("--val_root", default="/root/dac_singing/data/val")
+    ap.add_argument("--val_root", default="data/val")
     ap.add_argument("--per_dataset", type=int, default=30)
     ap.add_argument("--dur", type=float, default=6.0)
     ap.add_argument("--seed", type=int, default=0)
