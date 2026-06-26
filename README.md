@@ -10,6 +10,8 @@ Fine-tuned weights of the **Descript Audio Codec (DAC) 24 kHz** for **singing vo
 
 **Research / non-commercial use only** (see [License](#license)).
 
+📦 **Weights:** [Hugging Face Hub — Joshua-1995/Singing-finetuned-DAC](https://huggingface.co/Joshua-1995/Singing-finetuned-DAC)
+
 ---
 
 ## Why
@@ -35,6 +37,7 @@ datasets; identical clips before/after). Metric definitions match the DAC paper'
 | Mel distance ↓ | 0.668 | **0.391** | −0.277 |
 | STFT distance ↓ | 1.358 | **1.105** | −0.253 |
 | SI-SDR (dB) ↑ | −9.6 | **+15.6** | +25.1 |
+| PESQ ↑ | 4.22 | **4.47** | +0.25 |
 
 Fine-tuned = best checkpoint (val mel/loss 1.31 → 0.38). Off-the-shelf DAC reconstructs
 singing waveforms poorly (SI-SDR −9.6 dB on singing, vs ~16 dB reported on general audio);

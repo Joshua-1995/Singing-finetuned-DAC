@@ -44,10 +44,11 @@ Fixed held-out set (160 clips across 6 datasets), identical clips before/after
 | Mel distance ↓ | 0.668 | 0.391 | −0.277 |
 | STFT distance ↓ | 1.358 | 1.105 | −0.253 |
 | SI-SDR (dB) ↑ | −9.6 | +15.6 | +25.1 |
+| PESQ ↑ | 4.22 | 4.47 | +0.25 |
 
 Off-the-shelf DAC reconstructs singing waveforms poorly (SI-SDR −9.6 dB on singing vs ~16 dB
 on general audio); fine-tuning restores it to the codec's native quality on the singing domain.
-`scripts/eval_quality.py` additionally reports PESQ/STOI/MCD/F0 metrics.
+`scripts/eval_quality.py` additionally reports STOI/MCD/F0 metrics.
 
 ## License
 Research / non-commercial only. Weights inherit the non-commercial terms of the
