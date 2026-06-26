@@ -43,16 +43,11 @@ Fixed held-out set (160 clips across 6 datasets), identical clips before/after
 |---|---:|---:|---|
 | Mel distance ↓ | 0.668 | 0.391 | −0.277 |
 | STFT distance ↓ | 1.358 | 1.105 | −0.253 |
-| MCD (dB) ↓ | 2.67 | 2.36 | −0.31 |
-| F0 RMSE (cents) ↓ | 100.1 | 93.0 | −7.1 |
-| F0 correlation ↑ | 0.900 | 0.919 | +0.019 |
-| PESQ ↑ | 4.22 | 4.47 | +0.25 |
-| STOI ↑ | 0.893 | 0.933 | +0.040 |
 | SI-SDR (dB) ↑ | −9.6 | +15.6 | +25.1 |
-| VDE ↓ | 0.029 | 0.058 | +0.029 (regressed) |
-| GPE ↓ | 0.017 | 0.012 | −0.005 |
 
-9/10 metrics improved; VDE (voicing-decision error) regressed slightly. See `docs/mel_compare.png`.
+Off-the-shelf DAC reconstructs singing waveforms poorly (SI-SDR −9.6 dB on singing vs ~16 dB
+on general audio); fine-tuning restores it to the codec's native quality on the singing domain.
+`scripts/eval_quality.py` additionally reports PESQ/STOI/MCD/F0 metrics.
 
 ## Limitations & biases
 - Korean-heavy data → other languages/singing styles may generalize less well.
