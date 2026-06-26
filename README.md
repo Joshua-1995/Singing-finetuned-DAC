@@ -157,10 +157,6 @@ bash scripts/train.sh
 python scripts/eval_quality.py --ckpt pretrained    --out runs/eval/baseline.json  --build_manifest runs/eval/manifest.json
 python scripts/eval_quality.py --ckpt runs/dac_singing_ft/best --out runs/eval/finetuned.json --manifest runs/eval/manifest.json
 python scripts/eval_quality.py --compare runs/eval/baseline.json runs/eval/finetuned.json
-
-# 5. (optional) mel-spectrogram comparison figure
-python scripts/plot_mel.py --manifest runs/eval/manifest.json \
-    --pretrained pretrained --finetuned runs/dac_singing_ft/best --out docs/mel_compare.png
 ```
 
 `scripts/train.py` is adapted from the DAC training script (MIT); the one change plus
