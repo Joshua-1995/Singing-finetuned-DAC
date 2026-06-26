@@ -83,6 +83,10 @@ y = model.decode(z)                          # reconstructed waveform
 > Weights are hosted separately (not in this Git repo) — see the
 > **[Weights](#weights)** section.
 
+**Before/after demo:** [`notebooks/compare_before_after.ipynb`](notebooks/compare_before_after.ipynb)
+— load your own clip and compare *original vs pretrained-DAC vs fine-tuned* by ear, with
+mel-spectrograms and metrics. (Auto-downloads both models; runs on Colab.)
+
 ## How it was fine-tuned
 
 - **Base**: `descript-audio-codec` 24 kHz, 8 kbps ([`weights_24khz_8kbps_0.0.4`](https://github.com/descriptinc/descript-audio-codec/releases/download/0.0.4/weights_24khz.pth)),
