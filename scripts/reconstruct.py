@@ -1,14 +1,15 @@
 #!/usr/bin/env python
-"""Fine-tuned DAC로 오디오를 encode->decode 재합성하고 품질 지표를 출력한다.
+"""Reconstruct audio (encode->decode) with the fine-tuned DAC and print a quality metric.
 
-사용 예:
-    # fine-tune 체크포인트로 검증 샘플 재합성
+Examples:
+    # reconstruct validation samples with a fine-tune checkpoint
     python reconstruct.py --ckpt runs/dac_singing_ft/best --in data/val --out recon_out --n 8
 
-    # pretrained와 비교 (--compare_pretrained)
+    # compare against the pretrained model (--compare_pretrained)
     python reconstruct.py --ckpt runs/dac_singing_ft/best --in data/val --out recon_out --compare_pretrained
 
-지표: mel L1 distance(낮을수록 좋음). 원본/재합성 wav를 out/ 에 저장하여 청취 비교.
+Metric: mel L1 distance (lower is better). Original/reconstructed wavs are saved to out/
+for listening comparison.
 """
 import argparse
 from pathlib import Path
@@ -23,7 +24,7 @@ from audiotools import AudioSignal
 def load_model(ckpt: str):
     p = Path(ckpt)
     if p.is_dir():
-        # trainer가 저장한 폴더 패키지 (best/ 또는 latest/)
+        # folder package saved by the trainer (best/ or latest/)
         model, _ = dac.model.DAC.load_from_folder(folder=str(p), map_location="cpu", package=True)
     else:
         model = dac.DAC.load(str(p))
@@ -50,10 +51,10 @@ def mel_l1(model_loss, a: AudioSignal, b: AudioSignal):
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--ckpt", required=True, help="best/ latest/ 폴더 또는 .pth")
+    ap.add_argument("--ckpt", required=True, help="best/ or latest/ folder, or a .pth")
     ap.add_argument("--in", dest="in_dir", required=True)
     ap.add_argument("--out", default="recon_out")
-    ap.add_argument("--n", type=int, default=8, help="재합성할 샘플 수")
+    ap.add_argument("--n", type=int, default=8, help="number of samples to reconstruct")
     ap.add_argument("--compare_pretrained", action="store_true")
     args = ap.parse_args()
 
@@ -69,7 +70,7 @@ def main():
 
     wavs = sorted(Path(args.in_dir).rglob("*.wav"))[: args.n]
     if not wavs:
-        print(f"[!] {args.in_dir} 에 wav가 없습니다."); return
+        print(f"[!] No wavs in {args.in_dir}."); return
 
     ft_scores, pre_scores = [], []
     for i, w in enumerate(wavs):
@@ -85,14 +86,14 @@ def main():
             recp, _ = roundtrip(pre, sig)
             d_pre = mel_l1(mel_loss, recp, sig); pre_scores.append(d_pre)
             recp.write(str(out_dir / f"{i:02d}_recon_pretrained.wav"))
-            line += f" | mel_L1(pretrained)={d_pre:.4f} | 개선={d_pre-d_ft:+.4f}"
+            line += f" | mel_L1(pretrained)={d_pre:.4f} | improvement={d_pre-d_ft:+.4f}"
         print(line)
 
-    print(f"\n평균 mel_L1 (fine-tuned): {np.mean(ft_scores):.4f}")
+    print(f"\nmean mel_L1 (fine-tuned): {np.mean(ft_scores):.4f}")
     if pre_scores:
-        print(f"평균 mel_L1 (pretrained): {np.mean(pre_scores):.4f}")
-        print(f"평균 개선폭: {np.mean(pre_scores)-np.mean(ft_scores):+.4f}  (양수면 fine-tune이 더 좋음)")
-    print(f"\n샘플 저장 -> {out_dir}/  (원본 vs 재합성 청취 비교)")
+        print(f"mean mel_L1 (pretrained): {np.mean(pre_scores):.4f}")
+        print(f"mean improvement: {np.mean(pre_scores)-np.mean(ft_scores):+.4f}  (positive = fine-tune better)")
+    print(f"\nsamples saved -> {out_dir}/  (original vs reconstruction, for listening)")
 
 
 if __name__ == "__main__":

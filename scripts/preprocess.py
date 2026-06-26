@@ -1,17 +1,18 @@
 #!/usr/bin/env python
-"""모든 오디오를 DAC 24kHz mono WAV(float32)로 변환한다. (멀티프로세싱 지원)
+"""Convert any audio to DAC 24 kHz mono WAV (float32). (multiprocessing-capable)
 
-사용 예:
+Examples:
     python preprocess.py --in_dir /raw/opensinger --out_dir data/train/public/opensinger
-    # 긴 곡(GV/MSSV)은 청크 분할 + 병렬:
+    # long full songs (GV/MSSV): chunk-split + parallel:
     python preprocess.py --in_dir data/raw/gv_ex --out_dir data/train/public/gv \
         --flatten --segment_sec 30 --jobs 64
 
-- 입력 폴더 재귀 탐색 (wav/flac/mp3/m4a/ogg).
-- 24kHz, mono, float32 WAV로 통일 (44k 등은 resample).
-- 1초 미만 제외.
-- --segment_sec 설정 시 긴 파일을 청크로 분할 (학습 시 DAC가 추가로 random 구간을 또 뽑음).
-- --jobs N 으로 N개 프로세스 병렬 처리.
+- recursively scans the input folder (wav/flac/mp3/m4a/ogg).
+- normalizes to 24 kHz, mono, float32 WAV (44k etc. are resampled).
+- drops files shorter than 1 s.
+- with --segment_sec, splits long files into chunks (training still draws a further random
+  excerpt from each via DAC's AudioDataset).
+- --jobs N runs N worker processes in parallel.
 """
 import argparse
 import os
@@ -28,7 +29,7 @@ AUDIO_EXTS = {".wav", ".flac", ".mp3", ".m4a", ".ogg", ".aac", ".opus"}
 
 
 def process_one(p_str, in_dir, out_dir, sr, min_sec, trim_db, flatten, segment_sec, seen_suffix):
-    """파일 하나를 처리. (kept, skipped) 반환."""
+    """Process a single file. Returns (kept, skipped)."""
     p = Path(p_str)
     try:
         wav, _ = librosa.load(str(p), sr=sr, mono=True)
@@ -46,7 +47,7 @@ def process_one(p_str, in_dir, out_dir, sr, min_sec, trim_db, flatten, segment_s
         wav = wav / peak
 
     if flatten:
-        # 병렬에서 파일명 충돌 방지를 위해 상대경로 기반 고유 stem 생성
+        # build a unique stem from the relative path to avoid filename clashes in parallel
         rel = p.relative_to(in_dir).with_suffix("")
         stem = str(rel).replace(os.sep, "_")
         base = Path(out_dir) / stem
@@ -82,8 +83,8 @@ def main():
     ap.add_argument("--trim_db", type=float, default=None)
     ap.add_argument("--flatten", action="store_true")
     ap.add_argument("--segment_sec", type=float, default=None,
-                    help="긴 파일을 이 길이(초) 청크로 분할 (GV/MSSV 같은 전곡용)")
-    ap.add_argument("--jobs", type=int, default=1, help="병렬 프로세스 수")
+                    help="split long files into chunks of this length in seconds (for full songs like GV/MSSV)")
+    ap.add_argument("--jobs", type=int, default=1, help="number of parallel worker processes")
     args = ap.parse_args()
 
     in_dir = Path(args.in_dir)
@@ -92,9 +93,9 @@ def main():
 
     files = [str(p) for p in in_dir.rglob("*") if p.suffix.lower() in AUDIO_EXTS]
     if not files:
-        print(f"[!] {in_dir} 안에서 오디오 파일을 찾지 못했습니다.")
+        print(f"[!] No audio files found under {in_dir}.")
         return
-    print(f"[i] {len(files)}개 파일 -> {out_dir} (jobs={args.jobs}, segment={args.segment_sec})")
+    print(f"[i] {len(files)} files -> {out_dir} (jobs={args.jobs}, segment={args.segment_sec})")
 
     worker = partial(process_one, in_dir=in_dir, out_dir=out_dir, sr=args.sr,
                      min_sec=args.min_sec, trim_db=args.trim_db, flatten=args.flatten,
@@ -109,7 +110,7 @@ def main():
             for k, s in tqdm(pool.imap_unordered(worker, files, chunksize=8), total=len(files)):
                 kept += k; skipped += s
 
-    print(f"[done] 생성 {kept}개 wav, 제외 {skipped}개 -> {out_dir}")
+    print(f"[done] wrote {kept} wav, skipped {skipped} -> {out_dir}")
 
 
 if __name__ == "__main__":

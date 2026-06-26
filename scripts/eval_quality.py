@@ -1,29 +1,30 @@
 #!/usr/bin/env python
-"""노래 데이터 reconstruction 품질 정량 평가 (학습 전/후 비교용).
+"""Quantitative reconstruction-quality evaluation for singing (before/after comparison).
 
-표준 코덱 지표 + 노래 특화 피치 지표를 한 번에 측정한다. DAC는 입력 길이를 보존하므로
-원본 vs 재합성이 sample-align 되어 있어 frame 단위 F0/MCD 비교가 유효하다.
+Measures standard codec metrics + singing-specific pitch metrics in one pass. DAC preserves
+input length, so original vs reconstruction are sample-aligned, making frame-level F0/MCD
+comparison valid.
 
-지표:
-  - mel_dist   : multi-scale mel L1 distance        (낮을수록↓ 좋음)
+Metrics:
+  - mel_dist   : multi-scale mel L1 distance        (lower ↓ is better)
   - stft_dist  : multi-scale STFT distance          (↓)
-  - si_sdr     : scale-invariant SDR (dB)           (높을수록↑ 좋음)
+  - si_sdr     : scale-invariant SDR (dB)           (higher ↑ is better)
   - pesq       : PESQ wideband (16k)                (↑, 1~4.5)
   - stoi       : STOI                               (↑, 0~1)
   - mcd        : Mel-Cepstral Distortion (dB)       (↓)
-  - f0_rmse_cents : F0 RMSE (cents)                 (↓)  ← 노래 음정 정확도
-  - f0_corr    : log-F0 Pearson 상관               (↑)  ← vibrato/멜로디 보존
-  - vde        : Voicing Decision Error             (↓)  ← 유/무성 판단 오류
-  - gpe        : Gross Pitch Error (>20% 빗나간 비율) (↓)
+  - f0_rmse_cents : F0 RMSE (cents)                 (↓)  <- singing pitch accuracy
+  - f0_corr    : log-F0 Pearson correlation         (↑)  <- vibrato/melody preservation
+  - vde        : Voicing Decision Error             (↓)  <- voiced/unvoiced errors
+  - gpe        : Gross Pitch Error (>20% off ratio) (↓)
 
-사용:
-  # 고정 평가셋 만들고 pretrained 베이스라인 측정
+Usage:
+  # build a fixed eval set and measure the pretrained baseline
   python eval_quality.py --ckpt pretrained --out runs/eval/baseline.json \
       --build_manifest runs/eval/manifest.json --per_dataset 30 --device cpu
-  # 학습 후 동일 평가셋으로 측정
+  # after training, measure on the same eval set
   python eval_quality.py --ckpt runs/dac_singing_ft/best --out runs/eval/finetuned.json \
       --manifest runs/eval/manifest.json --device cuda
-  # 두 결과 비교 표
+  # before/after comparison table
   python eval_quality.py --compare runs/eval/baseline.json runs/eval/finetuned.json
 """
 import argparse
@@ -34,9 +35,9 @@ from pathlib import Path
 import numpy as np
 
 
-# ----------------------------- 지표 구현 -----------------------------
+# ----------------------------- metrics -----------------------------
 def f0_metrics(ref, rec, sr, frame_period=5.0):
-    """pyworld Harvest 기반 F0/voicing 지표."""
+    """F0/voicing metrics based on pyworld Harvest."""
     import pyworld as pw
     ref = np.ascontiguousarray(ref, dtype=np.float64)
     rec = np.ascontiguousarray(rec, dtype=np.float64)
@@ -61,7 +62,7 @@ def f0_metrics(ref, rec, sr, frame_period=5.0):
 
 
 def si_sdr(ref, rec):
-    """표준 Scale-Invariant SDR (dB). 양수일수록 좋음."""
+    """Standard Scale-Invariant SDR (dB). Higher is better."""
     eps = 1e-8
     ref = ref - ref.mean(); rec = rec - rec.mean()
     alpha = (rec * ref).sum() / ((ref ** 2).sum() + eps)
@@ -71,10 +72,10 @@ def si_sdr(ref, rec):
 
 
 def mcd(ref, rec, sr, order=24, frame_period=5.0):
-    """Mel-Cepstral Distortion (dB). WORLD 포락선 -> pysptk.sp2mc (표준). 낮을수록 좋음."""
+    """Mel-Cepstral Distortion (dB). WORLD envelope -> pysptk.sp2mc (standard). Lower is better."""
     import pyworld as pw
     import pysptk
-    # 24kHz mel-warping 계수
+    # mel-warping coefficient by sample rate
     alpha = {16000: 0.42, 22050: 0.45, 24000: 0.46, 44100: 0.53, 48000: 0.554}.get(sr, 0.46)
     def mcc(x):
         x = np.ascontiguousarray(x, dtype=np.float64)
@@ -85,10 +86,10 @@ def mcd(ref, rec, sr, order=24, frame_period=5.0):
     n = min(len(cr), len(cc))
     if n < 1:
         return float("nan")
-    voiced = vr[:n] & vc[:n]                   # 유성 프레임만 (표준 관행)
+    voiced = vr[:n] & vc[:n]                   # voiced frames only (standard practice)
     if voiced.sum() < 1:
         voiced = np.ones(n, dtype=bool)
-    diff = cr[:n][voiced, 1:] - cc[:n][voiced, 1:]   # 0차(에너지) 제외
+    diff = cr[:n][voiced, 1:] - cc[:n][voiced, 1:]   # exclude 0th (energy) coefficient
     dist = np.sqrt(np.sum(diff ** 2, axis=1))
     return float((10.0 / math.log(10)) * math.sqrt(2) * np.mean(dist))
 
@@ -108,7 +109,7 @@ def stoi_metric(ref, rec, sr):
     return float(_stoi(ref[:n], rec[:n], sr, extended=False))
 
 
-# ----------------------------- 평가 루프 -----------------------------
+# ----------------------------- eval loop -----------------------------
 def build_manifest(val_root, per_dataset, dur, seed, out_path):
     import random, soundfile as sf
     rng = random.Random(seed)
@@ -174,7 +175,7 @@ def evaluate(ckpt, items, device, sr=24000):
         except Exception: r["mel_dist"] = float("nan")
         try: r["stft_dist"] = float(stft_loss(ya, xa))
         except Exception: r["stft_dist"] = float("nan")
-        try: r["si_sdr"] = si_sdr(ref, rec)        # 표준 SI-SDR (양수=좋음)
+        try: r["si_sdr"] = si_sdr(ref, rec)        # standard SI-SDR (higher = better)
         except Exception: r["si_sdr"] = float("nan")
         for name, fn in [("pesq", pesq_wb), ("stoi", stoi_metric)]:
             try: r[name] = fn(ref, rec, sr)
@@ -206,31 +207,31 @@ def aggregate(rows):
     return {"overall": overall, "n": len(rows), "per_dataset": per_ds}
 
 
-# ----------------------------- 비교 출력 -----------------------------
+# ----------------------------- comparison output -----------------------------
 DIRECTION = {"visqol":"↑","mel_dist":"↓","stft_dist":"↓","si_sdr":"↑","pesq":"↑","stoi":"↑","mcd":"↓",
              "f0_rmse_cents":"↓","f0_corr":"↑","vde":"↓","gpe":"↓"}
 
 def print_compare(a, b):
     A, B = json.load(open(a)), json.load(open(b))
     oa, ob = A["overall"], B["overall"]
-    print(f"\n{'metric':16s} {'dir':3s} {'before':>10s} {'after':>10s} {'Δ':>10s}  결과")
+    print(f"\n{'metric':16s} {'dir':3s} {'before':>10s} {'after':>10s} {'Δ':>10s}  result")
     print("-" * 64)
     for k in DIRECTION:
         if k not in oa: continue
         before, after = oa[k], ob[k]
         d = after - before
         good = (d < 0) if DIRECTION[k] == "↓" else (d > 0)
-        mark = "✅개선" if good else "⚠️악화"
+        mark = "improved" if good else "worse"
         print(f"{k:16s} {DIRECTION[k]:3s} {before:10.4f} {after:10.4f} {d:+10.4f}  {mark}")
     print(f"\n(n: before={A.get('n')}, after={B.get('n')})")
 
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--ckpt", help="pretrained | <best/latest 폴더> | <.pth>")
+    ap.add_argument("--ckpt", help="pretrained | <best/latest folder> | <.pth>")
     ap.add_argument("--out")
-    ap.add_argument("--manifest", help="기존 manifest 사용")
-    ap.add_argument("--build_manifest", help="새 manifest 생성 경로")
+    ap.add_argument("--manifest", help="use an existing manifest")
+    ap.add_argument("--build_manifest", help="path to write a new manifest")
     ap.add_argument("--val_root", default="data/val")
     ap.add_argument("--per_dataset", type=int, default=30)
     ap.add_argument("--dur", type=float, default=6.0)

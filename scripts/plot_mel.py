@@ -1,10 +1,10 @@
 #!/usr/bin/env python
-"""문서용 Mel-spectrogram 비교 그림 생성.
+"""Generate a Mel-spectrogram comparison figure for docs.
 
-각 샘플에 대해 [원본 | pretrained 재합성 | fine-tuned 재합성] mel-spectrogram을
-나란히 그려 PNG로 저장한다. 고음역 재현 차이를 눈으로 보여주는 용도.
+For each sample, plots [original | pretrained reconstruction | fine-tuned reconstruction]
+mel-spectrograms side by side and saves a PNG — to visualize high-frequency differences.
 
-사용:
+Usage:
   python plot_mel.py --manifest runs/eval/manifest.json \
       --pretrained pretrained --finetuned runs/dac_singing_ft/best \
       --n 4 --out docs/mel_compare.png --device cuda
@@ -59,7 +59,7 @@ def main():
     args = ap.parse_args()
 
     items = json.load(open(args.manifest))
-    # 데이터셋별로 골고루 n개
+    # one per dataset, up to n
     seen, picks = set(), []
     for it in items:
         if it["dataset"] not in seen:
