@@ -31,16 +31,21 @@ Measured on a fixed held-out evaluation set (identical clips before/after), usin
 
 | Metric | Pretrained DAC | Fine-tuned | Δ |
 |---|---:|---:|---|
-| Mel distance ↓ | 0.668 | _TBD_ | _TBD_ |
-| MCD (dB) ↓ | 2.67 | _TBD_ | _TBD_ |
-| **F0 RMSE (cents) ↓** | 100.1 | _TBD_ | _TBD_ |
-| **F0 correlation ↑** | 0.900 | _TBD_ | _TBD_ |
-| PESQ ↑ | 4.22 | _TBD_ | _TBD_ |
-| STOI ↑ | 0.893 | _TBD_ | _TBD_ |
+| Mel distance ↓ | 0.668 | **0.391** | −0.277 |
+| STFT distance ↓ | 1.358 | **1.105** | −0.253 |
+| MCD (dB) ↓ | 2.67 | **2.36** | −0.31 |
+| **F0 RMSE (cents) ↓** | 100.1 | **93.0** | −7.1 |
+| **F0 correlation ↑** | 0.900 | **0.919** | +0.019 |
+| PESQ ↑ | 4.22 | **4.47** | +0.25 |
+| STOI ↑ | 0.893 | **0.933** | +0.040 |
+| SI-SDR (dB) ↑ | −9.6 | **+15.6** | +25.1 |
 
-*Held-out eval set: 160 clips across 6 datasets. Pretrained = official DAC 24 kHz baseline;
-fine-tuned numbers filled in after training. (SI-SDR is reported in the JSON but omitted here —
-it is phase-sensitive and low for all GAN codecs.)*
+*Held-out eval set: 160 clips across the 6 datasets. Pretrained = official DAC 24 kHz
+baseline. Fine-tuned = best checkpoint (val mel/loss 1.31 → 0.38). Improvements across the
+board, most strikingly waveform fidelity (SI-SDR −9.6 → +15.6 dB) and singing pitch error
+(F0 RMSE −7 cents). One regression: voicing-decision error (VDE) rose 0.029 → 0.058, i.e.
+slightly noisier voiced/unvoiced boundaries (likely around breaths/silences). Reproduce with
+`scripts/eval_quality.py`.*
 
 ### Mel-spectrogram comparison
 
@@ -79,7 +84,7 @@ import dac
 from audiotools import AudioSignal
 
 # load fine-tuned weights (single-file export; see Releases / HF Hub link below)
-model = dac.DAC.load("dac_singing_finetune.pth").eval().to("cuda")
+model = dac.DAC.load("dac_singing_finetune_24khz.pth").eval().to("cuda")
 
 signal = AudioSignal("song.wav").resample(24000).to_mono()
 x = model.preprocess(signal.audio_data.cuda(), 24000)
@@ -180,6 +185,20 @@ Hyper-parameters live in [`conf/singing_24khz.yml`](conf/singing_24khz.yml).
 ## Weights
 
 Hosted on the Hugging Face Hub (not in this Git repo): **_link TBD_**
+
+| File | Size | Use |
+|---|---:|---|
+| `dac_singing_finetune_24khz.pth` | 286 MB | **Inference** — generator only; load with `dac.DAC.load(...)` |
+| `dac_singing_finetune_full_ckpt.tar.gz` | 2.1 GB | **Continue training** — generator + discriminator + optimizer/scheduler/tracker |
+
+The official DAC release ships no discriminator, so cold-start fine-tuning is unstable. We
+also publish the **full checkpoint** so you can resume fine-tuning smoothly. To continue from it:
+
+```bash
+tar xzf dac_singing_finetune_full_ckpt.tar.gz   # -> best/{dac,discriminator}
+mkdir -p runs/dac_singing_ft && mv best runs/dac_singing_ft/latest
+bash scripts/train.sh    # resumes generator + discriminator from our checkpoint
+```
 
 ## License
 
